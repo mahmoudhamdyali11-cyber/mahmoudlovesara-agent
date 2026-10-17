@@ -603,14 +603,16 @@ html[data-motion="reduced"] *{transition-duration:.15s!important;animation-durat
  const installBtn=document.getElementById('pwa-install-now');
  const laterBtn=document.getElementById('pwa-install-later');
  const help=document.getElementById('pwa-install-help');
- const key='ms_pwa_install_prompt_seen_v1';
+ const key='ms_pwa_install_prompt_seen_v2';
+ const wasSeen=()=>{try{return localStorage.getItem(key)==='1'||localStorage.getItem(key)==='installed'}catch{return false}};
+ const markSeen=value=>{try{localStorage.setItem(key,value||'1')}catch{}};
  const isStandalone=()=>window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;
- const showGate=()=>{if(!isStandalone()&&!localStorage.getItem(key))gate.classList.add('show')};
+ const showGate=()=>{if(!isStandalone()&&!wasSeen())gate.classList.add('show')};
  window.addEventListener('beforeinstallprompt',event=>{event.preventDefault();installPrompt=event;installBtn.textContent='تثبيت التطبيق';installBtn.disabled=false;});
- window.addEventListener('appinstalled',()=>{installPrompt=null;try{localStorage.setItem(key,'installed')}catch{}gate.classList.remove('show')});
+ window.addEventListener('appinstalled',()=>{installPrompt=null;markSeen('installed');gate.classList.remove('show')});
  installBtn.addEventListener('click',async()=>{
   if(installPrompt){
-   try{installPrompt.prompt();const result=await installPrompt.userChoice;if(result&&result.outcome==='accepted'){try{localStorage.setItem(key,'installed')}catch{}gate.classList.remove('show')}else{try{localStorage.setItem(key,'1')}catch{}gate.classList.remove('show')}installPrompt=null}
+   try{installPrompt.prompt();const result=await installPrompt.userChoice;if(result&&result.outcome==='accepted'){markSeen('installed');gate.classList.remove('show')}else{markSeen('1');gate.classList.remove('show')}installPrompt=null}
    catch{help.hidden=false;help.textContent='التثبيت غير متاح في هذه اللحظة. استخدم قائمة المتصفح ثم اختر «تثبيت التطبيق» أو «إضافة إلى الشاشة الرئيسية».'}
   }else{
    help.hidden=false;
@@ -618,10 +620,10 @@ html[data-motion="reduced"] *{transition-duration:.15s!important;animation-durat
    installBtn.textContent='عرضت لك خطوات التثبيت';
   }
  });
- laterBtn.addEventListener('click',()=>{try{localStorage.setItem(key,'1')}catch{}gate.classList.remove('show')});
+ laterBtn.addEventListener('click',()=>{markSeen('1');gate.classList.remove('show')});
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&gate.classList.contains('show'))laterBtn.click()});
  if('serviceWorker' in navigator && /^https?:$/.test(location.protocol)){window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(err=>console.warn('PWA offline worker unavailable',err)))}
- window.addEventListener('DOMContentLoaded',()=>{if(isStandalone()){try{localStorage.setItem(key,'installed')}catch{}return}showGate()});
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',showGate,{once:true});else showGate();
 })();
 </script>
 
