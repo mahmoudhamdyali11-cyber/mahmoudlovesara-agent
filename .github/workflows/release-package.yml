@@ -1,0 +1,115 @@
+name: Release package
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the exact release revision
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate patch and tracked secret-file paths
+        shell: bash
+        run: |
+          git diff --check HEAD^ HEAD
+          if git ls-files | grep -E '(^|/)\.env($|\.)'; then
+            echo "FAIL: tracked environment/secret file found"
+            exit 1
+          fi
+          if git grep -n -I -E 'sk-[A-Za-z0-9_-]{16,}|gh[pousr]_[A-Za-z0-9_]{20,}|xox[baprs]-[A-Za-z0-9-]{10,}|AKIA[0-9A-Z]{16}' -- . ':!pnpm-lock.yaml'; then
+            echo "FAIL: a common high-confidence credential pattern was found; review before release"
+            exit 1
+          fi
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.34.7
+          run_install: false
+
+      - name: Install locked dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Validate HTML, assets and inline JavaScript
+        run: pnpm quality:html
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Build
+        run: pnpm build
+
+      - name: Verify master HTML matches the canonical app
+        run: cmp --silent index.html PROJECT-MASTER.html
+
+      - name: Create clean full-project archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p release package-root/PROJECT-FINAL
+          git archive --format=tar HEAD | tar -xf - -C package-root/PROJECT-FINAL
+
+          cat > package-root/PROJECT-FINAL/RELEASE-METADATA.json <<EOF
+          {
+            "packageVersion": "1.0.0",
+            "sourceRepository": "mahmoudhamdyali11-cyber/mahmoudlovesara-agent",
+            "sourceBranch": "main",
+            "sourceCommit": "$GITHUB_SHA",
+            "workflowRunId": "$GITHUB_RUN_ID",
+            "builtAtUtc": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "verification": {
+              "trackedSecretPatternScan": "PASS",
+              "gitDiffCheck": "PASS",
+              "qualityHtml": "PASS",
+              "typecheck": "PASS",
+              "eveBuild": "PASS",
+              "masterMatchesIndex": "PASS"
+            }
+          }
+          EOF
+
+          (cd package-root && zip -qr "$GITHUB_WORKSPACE/release/PROJECT-FINAL.zip" PROJECT-FINAL)
+          sha256sum release/PROJECT-FINAL.zip > release/PROJECT-FINAL.zip.sha256
+          unzip -t release/PROJECT-FINAL.zip
+
+      - name: Upload release package
+        uses: actions/upload-artifact@v4
+        with:
+          name: project-final-package
+          path: |
+            release/PROJECT-FINAL.zip
+            release/PROJECT-FINAL.zip.sha256
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Publish release validation summary
+        shell: bash
+        run: |
+          {
+            echo "## PROJECT-FINAL 1.0.0"
+            echo ""
+            echo "- Source commit: $GITHUB_SHA"
+            echo "- Release package: PASS"
+            echo "- Quality HTML: PASS"
+            echo "- Typecheck: PASS"
+            echo "- Eve build: PASS"
+            echo "- Master HTML equality: PASS"
+            echo "- ZIP integrity: PASS"
+            echo ""
+            echo "Browser end-to-end / Android / Windows interactive verification is NOT VERIFIED by this workflow."
+          } >> "$GITHUB_STEP_SUMMARY"
