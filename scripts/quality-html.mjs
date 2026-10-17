@@ -40,7 +40,7 @@ if (/\/storage\/v1\/object\/public\/photos\//.test(html)) {
   process.exitCode = 1;
 }
 
-if (/src="\$\{[ne]\.src\}"/.test(html)) {
+if (/src="\$\{(?!esc\()[^"]+\}"/.test(html)) {
   console.error("FAIL: an unescaped dynamic image source remains in HTML templates");
   process.exitCode = 1;
 }
