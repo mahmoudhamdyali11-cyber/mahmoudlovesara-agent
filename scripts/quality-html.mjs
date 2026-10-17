@@ -7,6 +7,11 @@ const html = readFileSync(resolve(root, "index.html"), "utf8");
 const manifest = JSON.parse(
   readFileSync(resolve(root, "manifest.webmanifest"), "utf8"),
 );
+const packageJson = JSON.parse(readFileSync(resolve(root, "package.json"), "utf8"));
+const storageMigration = readFileSync(
+  resolve(root, "supabase/migrations/20261017000100_secure_private_photo_storage.sql"),
+  "utf8",
+);
 
 const requiredChecks = [
   ["Arabic RTL document", /<html[^>]+lang="ar"[^>]+dir="rtl"/i],
@@ -14,7 +19,18 @@ const requiredChecks = [
   ["Private-content indexing policy", /<meta[^>]+name="robots"[^>]+content="noindex,nofollow"/i],
   ["Manifest link", /<link[^>]+rel="manifest"[^>]+href="\/manifest\.webmanifest"/i],
   ["Signed URL support for private photos", /createSignedUrl\(/],
+  ["Import guard preserves the 100-image limit", /أكثر من 100 صورة/],
 ];
+
+if (packageJson.packageManager !== "pnpm@10.34.7") {
+  console.error("FAIL: packageManager must match the CI-pinned pnpm version");
+  process.exitCode = 1;
+}
+
+if (!/set public = false/i.test(storageMigration) || !/drop policy if exists "public can view album photos"/i.test(storageMigration) || !/create policy "album owners can view photos storage"/i.test(storageMigration)) {
+  console.error("FAIL: private photo storage migration is incomplete");
+  process.exitCode = 1;
+}
 
 for (const [label, pattern] of requiredChecks) {
   if (!pattern.test(html)) {
