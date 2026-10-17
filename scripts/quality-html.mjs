@@ -10,7 +10,7 @@ const manifest = JSON.parse(
 );
 const packageJson = JSON.parse(readFileSync(resolve(root, "package.json"), "utf8"));
 const storageMigration = readFileSync(
-  resolve(root, "supabase/migrations/20261017000100_secure_private_photo_storage.sql"),
+  resolve(root, "supabase/migrations/20261017002935_secure_private_photo_storage.sql"),
   "utf8",
 );
 
