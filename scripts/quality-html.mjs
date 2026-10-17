@@ -1,3 +1,4 @@
+import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { Script } from "node:vm";
@@ -35,6 +36,29 @@ if (!/set public = false/i.test(storageMigration) || !/drop policy if exists "pu
 for (const [label, pattern] of requiredChecks) {
   if (!pattern.test(html)) {
     console.error(`FAIL: ${label}`);
+    process.exitCode = 1;
+  }
+}
+const safeImageSourceMatch = html.match(
+  /function safeImageSrc\(t\)\{[\s\S]*?\}function cssImageUrl/,
+);
+if (!safeImageSourceMatch) {
+  console.error("FAIL: safeImageSrc helper not found for behavior checks");
+  process.exitCode = 1;
+} else {
+  try {
+    const helperSource = safeImageSourceMatch[0].replace(/function cssImageUrl$/, "");
+    const safeImageSrc = new Script("(" + helperSource + ")").runInNewContext({
+      URL,
+      location: { href: "https://app.test/" },
+    });
+    assert.equal(safeImageSrc("javascript:alert(1)"), "");
+    assert.equal(safeImageSrc("data:text/html;base64,PHNjcmlwdD4="), "");
+    assert.equal(safeImageSrc("https://user:pass@example.com/image.jpg"), "");
+    assert.equal(safeImageSrc("data:image/jpeg;base64,SGVsbG8="), "data:image/jpeg;base64,SGVsbG8=");
+    assert.equal(safeImageSrc("https://example.com/image.jpg"), "https://example.com/image.jpg");
+  } catch (error) {
+    console.error("FAIL: safeImageSrc behavior test: " + error.message);
     process.exitCode = 1;
   }
 }
