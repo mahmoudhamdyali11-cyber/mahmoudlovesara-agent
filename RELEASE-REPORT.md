@@ -42,6 +42,11 @@ Package version: **1.0.0**. The exact archived source commit and generated-at ti
 | Tracked high-confidence credential-pattern scan | PASS | Release workflow scans common provider-token formats and tracked `.env*` paths |
 | Master file equivalence | PASS | Release workflow runs `cmp index.html PROJECT-MASTER.html` |
 | ZIP integrity | PASS | Release workflow runs `unzip -t` |
+| Literal local asset references | PASS | Static markup scan found the expected manifest/icon references and no missing literal local HTML asset paths |
+| Firebase configuration inventory | PASS | The repository contains no Firebase SDK/config integration; the actual services are Supabase and Vercel/Eve |
+| Live Supabase API transactions | NOT VERIFIED | Cloud sign-in and full upload/update/delete/reload flows were not run in an authenticated browser |
+| Client-side route navigation | NOT VERIFIED | The app is a single root HTML document with query-mode behavior, not a multi-route router; browser navigation was not manually exercised |
+| Critical browser console errors | NOT VERIFIED | No connected browser session was available for live console inspection |
 
 The Supabase publishable key embedded in the browser source is designed for public clients and is not a service-role key. This does not eliminate the requirement for correct RLS, Auth and Storage policies. The secret-pattern check is targeted and is not a complete secret-scanning audit.
 
@@ -50,6 +55,9 @@ The Supabase publishable key embedded in the browser source is designed for publ
 | Item | Status | Why |
 |---|---|---|
 | All UI controls, forms and sections in a real browser | NOT VERIFIED | The release workflow is not a browser E2E suite |
+| Root route / query-mode behavior in a real browser | NOT VERIFIED | Static source inventory only; no interactive route/URL test performed |
+| Critical browser console errors | NOT VERIFIED | No live browser console capture was available |
+| Supabase Auth + Storage API round-trip | NOT VERIFIED | Policies were checked, but upload/edit/delete and reload were not executed through the UI |
 | Android / Windows responsive behavior on physical devices | NOT VERIFIED | No live-device run recorded |
 | Import/export round-trip with real user images | NOT VERIFIED | Source behavior inspected, but no live manual workflow completed |
 | Cloud sign-in, upload, edit, reorder, delete and reload as an album owner | NOT VERIFIED | Storage policy was queried, but full authenticated UI transactions were not run |
