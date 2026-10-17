@@ -515,6 +515,13 @@ html[data-motion="reduced"] *{transition-duration:.15s!important;animation-durat
 </div>
 <div id="admin">
   <div class="admin-head"><h3>⚙️ استوديو الإدارة — V7</h3><button class="icon-btn" id="admin-close">✕</button></div>
+  <div id="admin-pin" class="admin-card">
+    <p style="color:var(--soft);font-size:.9rem">أدخل رمز الاستوديو</p>
+    <input id="pin-input" class="lux-input" placeholder="PIN" inputmode="numeric"/>
+    <button class="btn btn-primary" id="pin-unlock" style="width:100%;margin-top:10px;min-height:48px">🔓 فتح الاستوديو</button>
+  </div>
+  <div id="admin-body" style="display:none">
+
   <div class="admin-card" style="margin:10px 0 14px">
     <h4 style="margin:0 0 6px">☁️ الدخول السحابي للصور</h4>
     <p style="font-size:.82rem;color:var(--soft);margin:0 0 10px">هذا الدخول لا يحتاج رمز الاستوديو. أدوات الإدارة تظل مقفلة بالرمز.</p>
@@ -528,12 +535,7 @@ html[data-motion="reduced"] *{transition-duration:.15s!important;animation-durat
   </div>
   <button class="btn" id="cloud-signout" hidden style="width:100%">🚪 خروج</button>
 </div>
-  <div id="admin-pin" class="admin-card">
-    <p style="color:var(--soft);font-size:.9rem">أدخل رمز الاستوديو</p>
-    <input id="pin-input" class="lux-input" placeholder="PIN" inputmode="numeric"/>
-    <button class="btn btn-primary" id="pin-unlock" style="width:100%;margin-top:10px;min-height:48px">🔓 فتح الاستوديو</button>
-  </div>
-  <div id="admin-body" style="display:none">
+
 
     <div class="admin-card">
       <h4>📤 رفع صور — شغال 100% موبايل وكمبيوتر</h4>
