@@ -114,7 +114,7 @@ The agent-side capabilities are defined by Eve and its channel/connection integr
 1. The browser loads the page and attempts cloud access.
 2. If cloud photos are available to the signed-in album owner, cloud photo metadata and time-limited signed URLs are used.
 3. Otherwise the app attempts IndexedDB, then localStorage.
-4. Image uploads without an enabled cloud session are resized in the browser and stored locally.
+4. When cloud integration is unavailable/uninitialized, image uploads are resized in the browser and stored locally. If the Supabase client is initialized but the user is signed out, the upload flow asks the user to sign in; it does not silently fall back to local upload.
 5. Save updates browser stores. Export creates a portable JSON backup with image data embedded. Import validates image sources, strips stale cloud identifiers and enforces the 100-photo limit.
 
 ### Cloud usage
