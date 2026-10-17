@@ -7,6 +7,7 @@
     "#evals/*": "./evals/*"
   },
   "scripts": {
+    "quality:html": "node scripts/quality-html.mjs",
     "build": "eve build",
     "deploy": "eve deploy",
     "dev": "eve dev",
