@@ -10,20 +10,20 @@
       <stop offset=".48" stop-color="#f7c86a"/>
       <stop offset="1" stop-color="#ff8c55"/>
     </linearGradient>
-    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
-      <feGaussianBlur stdDeviation="7" result="blur"/>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
       <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
     </filter>
   </defs>
   <rect width="512" height="512" rx="112" fill="url(#bg)"/>
-  <rect x="24" y="24" width="464" height="464" rx="94" fill="none" stroke="url(#gold)" stroke-opacity=".62" stroke-width="3"/>
-  <circle cx="256" cy="240" r="166" fill="none" stroke="#f7c86a" stroke-opacity=".16" stroke-width="2"/>
-  <path d="M256 348C231 325 132 264 132 191c0-42 31-72 70-72 25 0 44 13 54 34 10-21 29-34 54-34 39 0 70 30 70 72 0 73-99 134-124 157Z"
-        fill="#f7c86a" fill-opacity=".07" stroke="url(#gold)" stroke-opacity=".8" stroke-width="4"/>
-  <text x="256" y="260" text-anchor="middle" dominant-baseline="middle"
-        font-family="Georgia, 'Times New Roman', serif" font-size="118" font-weight="700"
-        letter-spacing="-8" fill="url(#gold)" stroke="#2b1a21" stroke-width="1" paint-order="stroke" filter="url(#glow)">M.S</text>
-  <path d="M176 390H336" stroke="url(#gold)" stroke-width="5" stroke-linecap="round"/>
-  <path d="M228 408H284" stroke="#f7c86a" stroke-opacity=".65" stroke-width="3" stroke-linecap="round"/>
-  <circle cx="256" cy="390" r="7" fill="#fff0bd"/>
+  <rect x="24" y="24" width="464" height="464" rx="94" fill="none" stroke="url(#gold)" stroke-opacity=".72" stroke-width="3"/>
+  <path d="M256 411C224 382 91 295 91 190c0-56 39-91 87-91 34 0 61 19 78 48 17-29 44-48 78-48 48 0 87 35 87 91 0 105-133 192-165 221Z"
+        fill="#f7c86a" fill-opacity=".045" stroke="url(#gold)" stroke-width="8" stroke-linejoin="round" filter="url(#glow)"/>
+  <path d="M256 390C225 361 113 286 113 195c0-42 29-72 66-72 34 0 59 22 77 53 18-31 43-53 77-53 37 0 66 30 66 72 0 91-112 166-143 195Z"
+        fill="none" stroke="#fff0bd" stroke-opacity=".42" stroke-width="2"/>
+  <text x="256" y="251" text-anchor="middle" dominant-baseline="middle"
+        font-family="Georgia, 'Times New Roman', serif" font-size="112" font-weight="700"
+        letter-spacing="-6" fill="url(#gold)" stroke="#2b1a21" stroke-width="1.5" paint-order="stroke" filter="url(#glow)">M.S</text>
+  <path d="M238 320c-10-9-28-21-28-36 0-10 7-17 17-17 7 0 12 4 15 10 3-6 8-10 15-10 10 0 17 7 17 17 0 15-18 27-28 36l-4 4Z"
+        fill="url(#gold)" stroke="#fff0bd" stroke-opacity=".6" stroke-width="1.5"/>
 </svg>
