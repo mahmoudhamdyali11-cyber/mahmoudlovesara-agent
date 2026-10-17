@@ -1,7 +1,8 @@
 {
   "version": 2,
-  "buildCommand": null,
-  "outputDirectory": ".",
   "framework": null,
+  "buildCommand": "echo Static PWA deployment",
+  "installCommand": "",
+  "outputDirectory": ".",
   "cleanUrls": false
 }
